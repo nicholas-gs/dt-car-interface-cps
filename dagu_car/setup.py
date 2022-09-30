@@ -28,7 +28,9 @@ setup(
     entry_points={
         'console_scripts': [
             'kinematics_node = dagu_car.kinematics_node:main',
-            'test_kinematics_node = dagu_car.test.test_kinematics_node:main'
+            'velocity_to_pose_node = dagu_car.velocity_to_pose_node:main',
+            'test_kinematics_node = dagu_car.test.test_kinematics_node:main',
+            'test_vtp_node = dagu_car.test.test_vtp_node:main'
         ],
     },
 )
