@@ -58,15 +58,15 @@ class JoyMapperNode(Node):
 
         self.load_launch_parameters()
 
-        self.pub_car_cmd = self.create_publisher(Twist2DStamped, "car_cmd", 1)
+        self.pub_car_cmd = self.create_publisher(Twist2DStamped, "~/car_cmd", 1)
         self.pub_joy_override = self.create_publisher(
-            BoolStamped, "joystick_override", 1)
+            BoolStamped, "~/joystick_override", 1)
         self.pub_e_stop = self.create_publisher(
-            BoolStamped, "emergency_stop", 1)
+            BoolStamped, "~/emergency_stop", 1)
 
-        self.sub_joy = self.create_subscription(Joy, "joy", self.joy_cb, 1)
+        self.sub_joy = self.create_subscription(Joy, "~/joy", self.joy_cb, 1)
         self.sub_e_stop = self.create_subscription(
-            BoolStamped, "emergency_stop", self.estop_cb, 1)
+            BoolStamped, "~/emergency_stop", self.estop_cb, 1)
 
         self.get_logger().info(f"Initialized with"
             f" {json.dumps(self.get_current_config(),sort_keys=True, indent=4)}")
