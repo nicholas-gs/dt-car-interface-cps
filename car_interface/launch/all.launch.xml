@@ -1,0 +1,42 @@
+<?xml version='1.0'?>
+
+<!-- Launch all the relevant nodes in the `dt-car-interface-cps` repository -->
+<launch>
+    <arg name="veh"/>
+    <arg name="kinematics_file_name" default="kinematics_default"/>
+    <arg name="joy_mapper_file_name" default="default"/>
+
+    <!-- Joy Mapper: reads raw joy commands and trigger actions in Duckietown -->
+    <node pkg="joy_mapper" exec="joy_mapper_node" name="joy_mapper_node"
+        namespace="$(var veh)">
+        <param from="$(find-pkg-share joy_mapper)/config/$(var joy_mapper_file_name).yaml"/>
+    </node>
+
+    <!-- Kinematics: turns chassis-level commands into wheels-level commands
+        and chassis-level velocities -->
+    <node pkg="dagu_car" exec="kinematics_node" name="kinematics_node"
+        namespace="$(var veh)">
+        <param name="veh" value="$(var veh)"/>
+        <param name="default_config" 
+            value="$(find-pkg-share dagu_car)/config/$(var kinematics_file_name).yaml"/>
+        <!-- Change subscription of `car_cmd` to `car_cmd_switch_node` source -->
+        <remap from="~/car_cmd" to="/$(var veh)/car_cmd_switch_node/cmd"/>
+        <!-- Change publish topic of `wheels_cmd` to `wheels_driver_node` subscriber -->
+        <remap from="~/wheels_cmd" to="/$(var veh)/wheels_driver_node/wheels_cmd"/>
+    </node>
+
+    <!-- Velocity To Pose (Odometry): turns chassis-level velocities into chassis pose -->
+    <node pkg="dagu_car" exec="velocity_to_pose_node"
+        name="velocity_to_pose_node" namespace="$(var veh)">
+        <param name="veh" value="$(var veh)"/>
+        <!-- Change subscription of `velocity` topic to `kinematics_node` source -->
+        <remap from="~/velocity" to="/$(var veh)/kinematics_node/velocity"/>
+    </node>
+
+    <!-- Car Command Switch: switches between different sources of car_cmds
+        depending on the current mode of the robot -->
+    <include file="$(find-pkg-share dagu_car)/launch/car_cmd_switch_node.launch.xml">
+        <arg name="veh" value="$(var veh)"/>
+    </include>
+
+</launch>
