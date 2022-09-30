@@ -38,10 +38,10 @@ class VelocityToPoseNode(Node):
         self.last_theta_dot = 0
         self.last_v = 0
 
-        self.pub_pose = self.create_publisher(Pose2DStamped, "pose", 1)
+        self.pub_pose = self.create_publisher(Pose2DStamped, "~/pose", 1)
 
         self.sub_velocity = self.create_subscription(
-            Twist2DStamped, "velocity", self.velocity_callback, 10)
+            Twist2DStamped, "~/velocity", self.velocity_callback, 10)
 
     def load_launch_parameters(self):
         self.declare_parameter("veh")
