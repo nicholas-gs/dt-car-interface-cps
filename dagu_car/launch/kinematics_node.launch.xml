@@ -1,13 +1,10 @@
 <?xml version='1.0'?>
 <launch>
     <arg name="veh"/>
-    <arg name="default_config" default="kinematics_default"/>
 
     <node pkg="dagu_car" exec="kinematics_node" name="kinematics_node"
         namespace="$(var veh)">
         <param name="veh" value="$(var veh)"/>
-        <param name="default_config" 
-            value="$(find-pkg-share dagu_car)/config/$(var default_config).yaml"/>
     </node>
 
 </launch>
