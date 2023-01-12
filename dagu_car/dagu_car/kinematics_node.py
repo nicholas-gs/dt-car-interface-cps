@@ -77,7 +77,7 @@ class KinematicsNode(Node):
             type=ParameterType.PARAMETER_DOUBLE, read_only=True),
         "gain" : ParameterDescriptor(name="gain",
             type=ParameterType.PARAMETER_DOUBLE,
-            floating_point_range=[FloatingPointRange(from_value=0.1, to_value=1.0)]),
+            floating_point_range=[FloatingPointRange(from_value=0.1, to_value=10.0)]),
         "trim" : ParameterDescriptor(name="trim",
             type=ParameterType.PARAMETER_DOUBLE,
             floating_point_range=[FloatingPointRange(from_value=0.0, to_value=1.0)]),
