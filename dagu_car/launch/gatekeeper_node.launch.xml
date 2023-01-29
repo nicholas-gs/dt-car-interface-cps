@@ -1,0 +1,6 @@
+<?xml version='1.0'?>
+<launch>
+    <arg name="veh"/>
+    <node pkg="dagu_car" exec="gatekeeper_node" name="gatekeeper_node"
+        namespace="$(var veh)">
+</launch>

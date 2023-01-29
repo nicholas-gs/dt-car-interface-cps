@@ -16,25 +16,12 @@
     <!-- Kinematics: turns chassis-level commands into wheels-level commands
         and chassis-level velocities -->
     <group if="$(eval '\'$(var use_kinematics_node)\'')">
-        <group if="$(eval '\'$(var use_cmd_switch_node)\'')">
-            <node pkg="dagu_car" exec="kinematics_node" name="kinematics_node"
-                namespace="$(var veh)">
-                <param name="veh" value="$(var veh)"/>
-                <!-- Change subscription of `car_cmd` to `car_cmd_switch_node` source -->
-                <remap from="~/car_cmd" to="/$(var veh)/car_cmd_switch_node/cmd"/>
-                <!-- Change publish topic of `wheels_cmd` to `wheels_driver_node` subscriber -->
-                <remap from="~/wheels_cmd" to="/$(var veh)/wheels_driver_node/wheels_cmd"/>
-            </node>
-        </group>
-
-        <group unless="$(eval '\'$(var use_cmd_switch_node)\'')">
-            <node pkg="dagu_car" exec="kinematics_node" name="kinematics_node"
-                    namespace="$(var veh)">
-                <param name="veh" value="$(var veh)"/>
-                <!-- Change publish topic of `wheels_cmd` to `wheels_driver_node` subscriber -->
-                <remap from="~/wheels_cmd" to="/$(var veh)/wheels_driver_node/wheels_cmd"/>
-            </node>
-        </group>
+        <node pkg="dagu_car" exec="kinematics_node" name="kinematics_node"
+            namespace="$(var veh)">
+            <param name="veh" value="$(var veh)"/>
+            <!-- Change publish topic of `wheels_cmd` to `wheels_driver_node` subscriber -->
+            <remap from="~/wheels_cmd" to="/$(var veh)/wheels_driver_node/wheels_cmd"/>
+        </node>
     </group>
 
     <!-- Velocity To Pose (Odometry): turns chassis-level velocities into chassis pose -->
@@ -60,6 +47,22 @@
         depending on the current mode of the robot -->
     <group if="$(eval '\'$(var use_cmd_switch_node)\'')">
         <include file="$(find-pkg-share dagu_car)/launch/car_cmd_switch_node.launch.xml">
+            <arg name="veh" value="$(var veh)"/>
+        </include>
+
+        <set_remap from="/$(var veh)/gatekeeper_node/out_car_cmd"
+            to="/$(var veh)/kinematics_node/car_cmd"/>
+        <set_remap from="/$(var veh)/gatekeeper_node/in_car_cmd"
+            to="/$(var veh)/car_cmd_switch_node/cmd"/>
+        <include file="$(find-pkg-share dagu_car)/launch/gatekeeper_node.launch.xml">
+            <arg name="veh" value="$(var veh)"/>
+        </include>
+    </group>
+
+    <group unless="$(eval '\'$(var use_cmd_switch_node)\'')">
+        <set_remap from="/$(var veh)/gatekeeper_node/out_car_cmd"
+            to="/$(var veh)/kinematics_node/car_cmd"/>
+        <include file="$(find-pkg-share dagu_car)/launch/gatekeeper_node.launch.xml">
             <arg name="veh" value="$(var veh)"/>
         </include>
     </group>
