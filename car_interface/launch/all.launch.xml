@@ -13,6 +13,8 @@
     <arg name="use_cmd_switch_node" default="false"/>
     <arg name="use_joy_mapper_node" default="false"/>
 
+    <arg name="default_passthrough" default="false"/>
+
     <!-- Kinematics: turns chassis-level commands into wheels-level commands
         and chassis-level velocities -->
     <group if="$(eval '\'$(var use_kinematics_node)\'')">
@@ -56,6 +58,7 @@
             to="/$(var veh)/car_cmd_switch_node/cmd"/>
         <include file="$(find-pkg-share dagu_car)/launch/gatekeeper_node.launch.xml">
             <arg name="veh" value="$(var veh)"/>
+            <arg name="default_passthrough" value="$(var default_passthrough)"/>
         </include>
     </group>
 
@@ -64,6 +67,7 @@
             to="/$(var veh)/kinematics_node/car_cmd"/>
         <include file="$(find-pkg-share dagu_car)/launch/gatekeeper_node.launch.xml">
             <arg name="veh" value="$(var veh)"/>
+            <arg name="default_passthrough" value="$(var default_passthrough)"/>
         </include>
     </group>
 
