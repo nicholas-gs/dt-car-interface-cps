@@ -60,19 +60,28 @@ OOD Alert: {self.ood_alert}")
 
     def cb_start(self, msg: BoolStamped):
         self.activated = msg.data
-        self.get_logger().info(f"Gatekeeper activated: {self.activated}")
+        if self.activated:
+            self.get_logger().info(f"Gatekeeper activated")
+        else:
+            self.get_logger().info(f"Gatekeeper deactivated, sending \
+stop command")
+            self.publish_stop_command()
 
     def cb_ood_alert(self, msg: OODAlert):
         _alert = msg.ood
 
         # If transition from no OOD alert to OOD alert
         if not self.ood_alert and _alert:
-            self.get_logger().warn("OOD alert triggered!")
+            self.get_logger().warn("OOD alert triggered! Sending stop command")
+            self.publish_stop_command()
         # If transition from OOD alert to no alert
         elif self.ood_alert and not _alert:
             self.get_logger().warn("OOD alert untriggered")
 
         self.ood_alert = _alert
+
+    def publish_stop_command(self):
+        self.pub_car_cmd.publish(Twist2DStamped(v=0.0, omega=0.0))
 
 
 def main(args=None):
